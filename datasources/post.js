@@ -4,6 +4,25 @@ const Post = require('../models/Post');
 const User = require('../models/User');
 const verify = require('../utils/verifyToken');
 
+const isAuthor = async (userId, postId) => {
+  const user = await User.findById(userId);
+
+  let isAuthor = false;
+
+  if (user.posts) {
+    for (let userPostId of user.posts) {
+      if (`${userPostId}` === `${postId}`) {
+        isAuthor = true;
+        break;
+      }
+    }
+  }
+
+  if (!isAuthor) throw new ApolloError(`User '${user.email}' is not an author of this post`)
+
+  return user;
+}
+
 class PostAPI extends DataSource {
   initialize(config) {
     this.token = config.context.token;
@@ -42,26 +61,9 @@ class PostAPI extends DataSource {
   }
 
   async editPost({ id, title, description, content }) {
-    
     const token = verify(this.token);
 
-    const user = await User.findById(token._id);
-
-    let isAuthor = false;
-
-    console.log(user.posts, id)
-    debugger
-
-    if (user.posts) {
-      for (let postId of user.posts) {
-        if (id === postId) {
-          isAuthor = true;
-          break;
-        }
-      }
-    }
-
-    if (!isAuthor) throw new ApolloError(`User '${user.email}' is not an author of this post`)
+    isAuthor(token._id, id);
     
     const toUpdate = {
       title,
@@ -85,6 +87,18 @@ class PostAPI extends DataSource {
     const updatedPost = await Post.findById(id).populate('author');
 
     return updatedPost;
+  }
+
+  async deletePost({ id }) {
+    const token = verify(this.token);
+
+    isAuthor(token._id, id);
+
+    const isDeleted = await Post.remove({ _id: id});
+
+    const user = await User.findById(token._id).populate('posts');
+
+    return user;
   }
 }
 

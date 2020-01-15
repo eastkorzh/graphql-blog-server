@@ -45,7 +45,10 @@ const typeDefs = gql`
       title: String
       description: String
       content: String
-    ): Post
+    ): Post    
+    deletePost(
+      id: ID!
+    ): User
   }
 `;
 

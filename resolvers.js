@@ -13,6 +13,8 @@ module.exports = {
     makePost: (_, { title, description, content }, { dataSources }) =>
       dataSources.postAPI.makePost({ title, description, content }),    
     editPost: (_, { id, title, description, content }, { dataSources }) =>
-      dataSources.postAPI.editPost({ id, title, description, content }),    
+      dataSources.postAPI.editPost({ id, title, description, content }),        
+    deletePost: (_, { id }, { dataSources }) =>
+      dataSources.postAPI.deletePost({ id }),
   }
 }
