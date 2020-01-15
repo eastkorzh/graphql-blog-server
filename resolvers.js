@@ -11,6 +11,8 @@ module.exports = {
     register: (_, { name, email, password }, { dataSources }) => 
       dataSources.authAPI.register({ name, email, password }),
     makePost: (_, { title, description, content }, { dataSources }) =>
-      dataSources.postAPI.makePost({ title, description, content }),
+      dataSources.postAPI.makePost({ title, description, content }),    
+    editPost: (_, { id, title, description, content }, { dataSources }) =>
+      dataSources.postAPI.editPost({ id, title, description, content }),    
   }
 }

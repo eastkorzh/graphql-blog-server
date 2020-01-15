@@ -40,6 +40,12 @@ const typeDefs = gql`
       description: String
       content: String!
     ): Post
+    editPost(
+      id: ID!
+      title: String
+      description: String
+      content: String
+    ): Post
   }
 `;
 
