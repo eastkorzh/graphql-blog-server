@@ -23,6 +23,7 @@ const typeDefs = gql`
     post(id: ID!): Post
     users: [User]
     user(id: ID!): User
+    me: User
     login(
       email: String!
       password: String!

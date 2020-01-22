@@ -8,13 +8,21 @@ class UserAPI extends DataSource {
   }
   
   async getAllUsers() {
-    const users = User.find();
+    const users = await User.find();
 
     return users;
   }
 
   async getUser(id) {
-    const user = User.findById(id).populate('posts');
+    const user = await User.findById(id).populate('posts');
+
+    return user;
+  }
+
+  async getLoggedUser() {
+    const token = verify(this.token);
+    
+    const user = await User.findById(token._id).populate('posts');
 
     return user;
   }

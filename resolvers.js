@@ -4,6 +4,7 @@ module.exports = {
     post: (_, { id }, { dataSources }) => dataSources.postAPI.getPost(id),
     users: (_, __, { dataSources }) => dataSources.userAPI.getAllUsers(),
     user: (_, { id }, { dataSources }) => dataSources.userAPI.getUser(id),
+    me: (_, __, { dataSources }) => dataSources.userAPI.getLoggedUser(),
     login: (_, { email, password }, { dataSources }) => 
       dataSources.authAPI.login({ email, password }),
   },
