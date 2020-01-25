@@ -18,7 +18,14 @@ const typeDefs = gql`
     token: String
   }
 
+  type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+  }
+
   type Query {
+    uploads: [File]
     posts: [Post]
     post(id: ID!): Post
     users: [User]
@@ -50,6 +57,7 @@ const typeDefs = gql`
     deletePost(
       id: ID!
     ): User
+    singleUpload(file: Upload!): File!
   }
 `;
 
