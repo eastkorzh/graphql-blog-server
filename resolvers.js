@@ -1,6 +1,5 @@
 module.exports = {
   Query: {
-    uploads: (parent, args) => {},
     posts: (_, __, { dataSources }) => dataSources.postAPI.getAllPosts(),
     post: (_, { id }, { dataSources }) => dataSources.postAPI.getPost(id),
     users: (_, __, { dataSources }) => dataSources.userAPI.getAllUsers(),
@@ -10,26 +9,28 @@ module.exports = {
       dataSources.authAPI.login({ email, password }),
   },
   Mutation: {
-    async singleUpload(parent, { file }) {
-      const { filename, mimetype, encoding } = await file;
-      console.log(file)
-      // 1. Validate file metadata.
-
-      // 2. Stream file contents into cloud storage:
-      // https://nodejs.org/api/stream.html
-
-      // 3. Record the file upload in your DB.
-      // const id = await recordFile( … )
-
-      return { filename, mimetype, encoding };
-    },
     register: (_, { name, email, password }, { dataSources }) => 
       dataSources.authAPI.register({ name, email, password }),
+
     makePost: (_, { title, description, content }, { dataSources }) =>
       dataSources.postAPI.makePost({ title, description, content }),    
+
     editPost: (_, { id, title, description, content }, { dataSources }) =>
-      dataSources.postAPI.editPost({ id, title, description, content }),        
+      dataSources.postAPI.editPost({ id, title, description, content }),  
+
     deletePost: (_, { id }, { dataSources }) =>
       dataSources.postAPI.deletePost({ id }),
+
+    updateUserName: (_, { newName }, { dataSources }) =>
+      dataSources.userAPI.updateUserName({ newName }),
+
+    updateUserEmail: (_, { newEmail }, { dataSources }) =>
+      dataSources.userAPI.updateUserEmail({ newEmail }),
+
+    updateUserPassword: (_, { oldPassword, newPassword }, { dataSources }) =>
+      dataSources.userAPI.updateUserPassword({ oldPassword, newPassword }),
+
+    updateUserAvatar: (_, { file }, { dataSources }) =>
+      dataSources.userAPI.updateUserAvatar({ file }),
   }
 }

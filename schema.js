@@ -14,18 +14,12 @@ const typeDefs = gql`
     _id: ID!
     name: String
     email: String
+    avatar: String
     posts: [Post]
     token: String
   }
 
-  type File {
-    filename: String!
-    mimetype: String!
-    encoding: String!
-  }
-
   type Query {
-    uploads: [File]
     posts: [Post]
     post(id: ID!): Post
     users: [User]
@@ -57,7 +51,19 @@ const typeDefs = gql`
     deletePost(
       id: ID!
     ): User
-    singleUpload(file: Upload!): File!
+    updateUserName(
+      newName: String!
+    ): User
+    updateUserEmail(
+      newEmail: String!
+    ): User
+    updateUserPassword(
+      oldPassword: String!
+      newPassword: String!
+    ): User
+    updateUserAvatar(
+      file: Upload!
+    ): User
   }
 `;
 

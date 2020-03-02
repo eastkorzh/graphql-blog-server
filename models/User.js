@@ -19,6 +19,12 @@ const userSchema = new mongoose.Schema({
     min: 4,
     max: 1024,
   },
+  avatar: {
+    type: String,
+    required: false,
+    min: 1,
+    max: 1024,
+  },
   date: {
     type: Date,
     default: Date.now,
