@@ -32,5 +32,8 @@ module.exports = {
 
     updateUserAvatar: (_, { file }, { dataSources }) =>
       dataSources.userAPI.updateUserAvatar({ file }),
+
+    addPhoto: (_, { file, id }, { dataSources }) =>
+      dataSources.postAPI.addPhoto({ file, id }),
   }
 }

@@ -3,6 +3,7 @@ const { ApolloError } = require('apollo-server');
 const Post = require('../models/Post');
 const User = require('../models/User');
 const verify = require('../utils/verifyToken');
+const cloudinary = require('cloudinary').v2;
 
 const isAuthor = async (userId, postId) => {
   const user = await User.findById(userId);
@@ -52,7 +53,7 @@ class PostAPI extends DataSource {
 
     const savedPost = await post.save();
 
-    const updatedUser = await User.updateOne(
+    await User.updateOne(
       { _id: token._id },
       { $push: { posts: token._id }}
     )
@@ -79,7 +80,7 @@ class PostAPI extends DataSource {
       }
     }
 
-    const isUpdated = await Post.updateOne(
+    await Post.updateOne(
       { _id: id },
       { $set: filteredToUpdate }
     );
@@ -94,11 +95,45 @@ class PostAPI extends DataSource {
 
     isAuthor(token._id, id);
 
-    const isDeleted = await Post.remove({ _id: id});
+    await Post.remove({ _id: id});
 
     const user = await User.findById(token._id).populate('posts');
 
     return user;
+  }
+
+  async addPhoto({ file, id }) {
+    verify(this.token);
+
+    const { createReadStream } = await file;
+    
+    const stream = createReadStream();
+
+    const url = await new Promise((resolve, reject) => {
+      const upload_stream = cloudinary.uploader.upload_stream({ 
+        tags: 'post_photo',
+        width: 1200,
+        crop: "limit",
+      }, (err, image) => {
+        resolve(image.url)
+      })
+
+      // If there's an error writing the file, remove the partially written file
+      // and reject the promise.
+      upload_stream.on('error', error => reject(error));
+  
+      // In node <= 13, errors are not automatically propagated between piped
+      // streams. If there is an error receiving the upload, destroy the write
+      // stream with the corresponding error.
+      stream.on('error', error => upload_stream.destroy(error))
+  
+      stream.pipe(upload_stream)
+    });
+
+    return {
+      url,
+      id,
+    };
   }
 }
 

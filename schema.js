@@ -1,6 +1,11 @@
 const { gql } = require('apollo-server');
 
 const typeDefs = gql`
+  type Photo {
+    url: String
+    id: ID!
+  }
+
   type Post {
     _id: ID!
     title: String!
@@ -64,6 +69,10 @@ const typeDefs = gql`
     updateUserAvatar(
       file: Upload!
     ): User
+    addPhoto(
+      file: Upload!
+      id: ID!
+    ): Photo
   }
 `;
 
