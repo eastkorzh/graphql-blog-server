@@ -27,7 +27,7 @@ class UserAPI extends DataSource {
   async getLoggedUser() {
     const token = verify(this.token);
     
-    const user = await User.findById(token._id).populate('posts');
+    const user = await User.findById(token._id).populate('posts').populate('drafts');
 
     return user;
   }

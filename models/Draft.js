@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const PostSchema = mongoose.Schema({
+const DraftSchema = mongoose.Schema({
   _id: {
     type: String,
     required: true,
@@ -24,4 +24,4 @@ const PostSchema = mongoose.Schema({
   }
 }, { _id: false });
 
-module.exports = mongoose.model('Post', PostSchema);
+module.exports = mongoose.model('Draft', DraftSchema);

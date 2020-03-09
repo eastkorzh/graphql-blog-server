@@ -1,6 +1,7 @@
 const { DataSource } = require('apollo-datasource');
 const { ApolloError } = require('apollo-server');
 const Post = require('../models/Post');
+const Draft = require('../models/Draft');
 const User = require('../models/User');
 const verify = require('../utils/verifyToken');
 const cloudinary = require('cloudinary').v2;
@@ -19,6 +20,15 @@ const isAuthor = async (userId, postId) => {
     }
   }
 
+  if (user.drafts) {
+    for (let userPostId of user.drafts) {
+      if (`${userPostId}` === `${postId}`) {
+        isAuthor = true;
+        break;
+      }
+    }
+  }
+
   if (!isAuthor) throw new ApolloError(`User '${user.email}' is not an author of this post`)
 
   return user;
@@ -27,6 +37,123 @@ const isAuthor = async (userId, postId) => {
 class PostAPI extends DataSource {
   initialize(config) {
     this.token = config.context.token;
+  }
+
+  async makeDraft({ title, content, _id }) {
+    const token = verify(this.token);
+
+    const draft = new Draft({
+      _id,
+      title,
+      content,
+      author: token._id
+    })
+    
+    const savedDraft = await draft.save();
+
+    await User.updateOne(
+      { _id: token._id },
+      { $push: { drafts: savedDraft._doc._id }}
+    )
+
+    return savedDraft;
+  }
+
+  async updateDraft({ title, content, _id}) {
+    const token = verify(this.token);
+
+    const author = await isAuthor(token._id, _id);
+
+    await Draft.updateOne(
+      { _id },
+      { $set: {
+        title,
+        content,
+      }}
+    )
+
+    return {
+      _id,
+      title,
+      content,
+      author,
+      date: new Date().getTime(),
+    }
+  }
+
+  async deleteDraft({ _id }) {
+    const token = verify(this.token);
+
+    const author = await isAuthor(token._id, _id);
+
+    const filteredDrafts = author._doc.drafts.filter(itemId => `${itemId}` !== `${_id}`);
+ 
+    await Draft.deleteOne({ _id });
+    
+    await User.updateOne(
+      { _id: token._id },
+      [
+        { $unset: [ "drafts" ]},
+        { $set: { drafts: filteredDrafts }}
+      ]
+    )
+
+    const user = await User.findById(token._id).populate('posts').populate('drafts');
+
+    return user;
+  }
+
+  async getAllDrafts() {
+    verify(this.token);
+
+    const findedDraft = await Draft.find().populate('author')
+
+    return findedDraft;
+  }
+
+  async getDraft({ _id }) {
+    verify(this.token);
+
+    const draft = await Draft.findById(_id).populate('author')
+
+    return draft;
+  }
+
+  async publishDraft({ _id }) {
+    const token = verify(this.token);
+
+    const author = await isAuthor(token._id, _id);
+    const filteredDrafts = author._doc.drafts.filter(itemId => `${itemId}` !== `${_id}`)
+    
+    const draft = await Draft.findById(_id); 
+    const post = new Post({
+      ...draft._doc
+    }) 
+
+    await Draft.deleteOne({ _id });
+    await User.updateOne(
+      { _id: token._id },
+      [
+        { $unset: [ "drafts" ]},
+        { $set: { drafts: filteredDrafts }},
+      ]
+    )
+    
+    await post.save();
+    await User.updateOne(
+      { _id: token._id },
+      { $push: { posts: _id }},
+    )
+    
+    const updatedUser = await User.findById(token._id).populate('posts').populate('drafts');
+
+    return updatedUser;
+  }
+
+  async getPost(id) {
+    const post = await Post.findById(id).populate('author')
+
+    return post;
   }
 
   async getAllPosts() {
@@ -41,21 +168,21 @@ class PostAPI extends DataSource {
     return post;
   }
 
-  async makePost({ title, description, content }) {
+  async makePost({ title, content, _id }) {
     const token = verify(this.token);
 
     const post = new Post({
+      _id,
       title,
-      description,
       content,
       author: token._id
     })
 
     const savedPost = await post.save();
-
+    
     await User.updateOne(
       { _id: token._id },
-      { $push: { posts: token._id }}
+      { $push: { posts: savedPost._doc._id }}
     )
 
     return savedPost;
@@ -90,14 +217,24 @@ class PostAPI extends DataSource {
     return updatedPost;
   }
 
-  async deletePost({ id }) {
+  async deletePost({ _id }) {
     const token = verify(this.token);
 
-    isAuthor(token._id, id);
+    const author = await isAuthor(token._id, _id);
 
-    await Post.remove({ _id: id});
+    const filteredPosts = author._doc.posts.filter(itemId => `${itemId}` !== `${_id}`);
+    
+    await Post.deleteOne({ _id });
+    
+    await User.updateOne(
+      { _id: token._id },
+      [
+        { $unset: [ "posts" ]},
+        { $set: { posts: filteredPosts }}
+      ]
+    )
 
-    const user = await User.findById(token._id).populate('posts');
+    const user = await User.findById(token._id).populate('posts').populate('drafts');
 
     return user;
   }

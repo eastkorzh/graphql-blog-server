@@ -8,7 +8,7 @@ const typeDefs = gql`
 
   type Post {
     _id: ID!
-    title: String!
+    title: String
     description: String
     content: String
     date: String
@@ -21,12 +21,17 @@ const typeDefs = gql`
     email: String
     avatar: String
     posts: [Post]
+    drafts: [Post]
     token: String
   }
 
   type Query {
     posts: [Post]
     post(id: ID!): Post
+
+    drafts: [Post]
+    draft(_id: ID!): Post
+
     users: [User]
     user(id: ID!): User
     me: User
@@ -43,10 +48,26 @@ const typeDefs = gql`
       password: String!
     ): User
     makePost(
+      _id: ID!
       title: String!
-      description: String
       content: String!
     ): Post
+
+    makeDraft(
+      _id: ID!
+      title: String!
+      content: String!
+    ): Post
+    updateDraft(
+      _id: ID!
+      title: String!
+      content: String!
+    ): Post
+    deleteDraft(
+      _id: ID!
+    ): User
+    publishDraft(_id: ID!): User
+
     editPost(
       id: ID!
       title: String
@@ -54,7 +75,7 @@ const typeDefs = gql`
       content: String
     ): Post    
     deletePost(
-      id: ID!
+      _id: ID!
     ): User
     updateUserName(
       newName: String!

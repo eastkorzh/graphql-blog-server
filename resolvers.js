@@ -2,24 +2,43 @@ module.exports = {
   Query: {
     posts: (_, __, { dataSources }) => dataSources.postAPI.getAllPosts(),
     post: (_, { id }, { dataSources }) => dataSources.postAPI.getPost(id),
+
+    drafts: (_, __, { dataSources }) => dataSources.postAPI.getAllDrafts(),
+    draft: (_, { _id }, { dataSources }) => dataSources.postAPI.getDraft({ _id }),
+
     users: (_, __, { dataSources }) => dataSources.userAPI.getAllUsers(),
     user: (_, { id }, { dataSources }) => dataSources.userAPI.getUser(id),
     me: (_, __, { dataSources }) => dataSources.userAPI.getLoggedUser(),
     login: (_, { email, password }, { dataSources }) => 
       dataSources.authAPI.login({ email, password }),
   },
-  Mutation: {
-    register: (_, { name, email, password }, { dataSources }) => 
-      dataSources.authAPI.register({ name, email, password }),
+  Mutation: {    
+    // Draft
+    makeDraft: (_, { title, content, _id }, { dataSources }) =>
+      dataSources.postAPI.makeDraft({ title, content, _id }),
 
-    makePost: (_, { title, description, content }, { dataSources }) =>
-      dataSources.postAPI.makePost({ title, description, content }),    
+    updateDraft: (_, { title, content, _id }, { dataSources }) =>
+      dataSources.postAPI.updateDraft({ title, content, _id }),
+
+    deleteDraft: (_, { _id }, { dataSources }) =>
+      dataSources.postAPI.deleteDraft({ _id }),
+
+    publishDraft: (_, { _id }, { dataSources }) => 
+      dataSources.postAPI.publishDraft({ _id }),
+
+    // Post
+    makePost: (_, { title, content, _id }, { dataSources }) =>
+      dataSources.postAPI.makePost({ title, content, _id }),
 
     editPost: (_, { id, title, description, content }, { dataSources }) =>
-      dataSources.postAPI.editPost({ id, title, description, content }),  
+      dataSources.postAPI.editPost({ id, title, description, content }),
 
-    deletePost: (_, { id }, { dataSources }) =>
-      dataSources.postAPI.deletePost({ id }),
+    deletePost: (_, { _id }, { dataSources }) =>
+      dataSources.postAPI.deletePost({ _id }),
+
+    // User
+    register: (_, { name, email, password }, { dataSources }) => 
+      dataSources.authAPI.register({ name, email, password }),
 
     updateUserName: (_, { newName }, { dataSources }) =>
       dataSources.userAPI.updateUserName({ newName }),
@@ -33,6 +52,7 @@ module.exports = {
     updateUserAvatar: (_, { file }, { dataSources }) =>
       dataSources.userAPI.updateUserAvatar({ file }),
 
+    // File uploading
     addPhoto: (_, { file, id }, { dataSources }) =>
       dataSources.postAPI.addPhoto({ file, id }),
   }

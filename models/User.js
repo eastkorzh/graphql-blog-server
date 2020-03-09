@@ -32,7 +32,11 @@ const userSchema = new mongoose.Schema({
   posts: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Post',
-  }]
+  }],
+  drafts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Draft',
+  }],
 })
 
 userSchema.methods.createPost = function() {
