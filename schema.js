@@ -11,7 +11,19 @@ const typeDefs = gql`
     title: String
     description: String
     content: String
+    cover: String
     date: String
+    author: User
+  }
+
+  type Draft {
+    _id: ID!
+    title: String
+    description: String
+    content: String
+    cover: String
+    date: String
+    originalPost: ID,
     author: User
   }
 
@@ -21,16 +33,16 @@ const typeDefs = gql`
     email: String
     avatar: String
     posts: [Post]
-    drafts: [Post]
+    drafts: [Draft]
     token: String
   }
 
   type Query {
     posts: [Post]
-    post(id: ID!): Post
+    post(_id: ID!): Post
 
-    drafts: [Post]
-    draft(_id: ID!): Post
+    drafts: [Draft]
+    draft(_id: ID!): Draft
 
     users: [User]
     user(id: ID!): User
@@ -53,27 +65,26 @@ const typeDefs = gql`
       content: String!
     ): Post
 
-    makeDraft(
+    createDraft(
       _id: ID!
-      title: String!
-      content: String!
-    ): Post
+      title: String
+      content: String
+    ): Draft
     updateDraft(
       _id: ID!
-      title: String!
-      content: String!
-    ): Post
+      title: String
+      content: String
+      cover: String
+    ): Draft
     deleteDraft(
       _id: ID!
     ): User
     publishDraft(_id: ID!): User
 
     editPost(
-      id: ID!
-      title: String
-      description: String
-      content: String
-    ): Post    
+      postId: ID!
+      draftId: ID!
+    ): User    
     deletePost(
       _id: ID!
     ): User

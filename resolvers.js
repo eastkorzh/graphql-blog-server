@@ -1,7 +1,7 @@
 module.exports = {
   Query: {
     posts: (_, __, { dataSources }) => dataSources.postAPI.getAllPosts(),
-    post: (_, { id }, { dataSources }) => dataSources.postAPI.getPost(id),
+    post: (_, { _id }, { dataSources }) => dataSources.postAPI.getPost(_id),
 
     drafts: (_, __, { dataSources }) => dataSources.postAPI.getAllDrafts(),
     draft: (_, { _id }, { dataSources }) => dataSources.postAPI.getDraft({ _id }),
@@ -14,11 +14,11 @@ module.exports = {
   },
   Mutation: {    
     // Draft
-    makeDraft: (_, { title, content, _id }, { dataSources }) =>
-      dataSources.postAPI.makeDraft({ title, content, _id }),
+    createDraft: (_, { title, content, _id }, { dataSources }) =>
+      dataSources.postAPI.createDraft({ title, content, _id }),
 
-    updateDraft: (_, { title, content, _id }, { dataSources }) =>
-      dataSources.postAPI.updateDraft({ title, content, _id }),
+    updateDraft: (_, { title, content, cover, _id }, { dataSources }) =>
+      dataSources.postAPI.updateDraft({ title, content, cover, _id }),
 
     deleteDraft: (_, { _id }, { dataSources }) =>
       dataSources.postAPI.deleteDraft({ _id }),
@@ -27,11 +27,8 @@ module.exports = {
       dataSources.postAPI.publishDraft({ _id }),
 
     // Post
-    makePost: (_, { title, content, _id }, { dataSources }) =>
-      dataSources.postAPI.makePost({ title, content, _id }),
-
-    editPost: (_, { id, title, description, content }, { dataSources }) =>
-      dataSources.postAPI.editPost({ id, title, description, content }),
+    editPost: (_, { postId, draftId }, { dataSources }) =>
+      dataSources.postAPI.editPost({ postId, draftId }),
 
     deletePost: (_, { _id }, { dataSources }) =>
       dataSources.postAPI.deletePost({ _id }),

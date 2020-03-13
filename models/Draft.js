@@ -7,7 +7,11 @@ const DraftSchema = mongoose.Schema({
   },
   title: {
     type: String,
-    required: true,
+    required: false,
+  },
+  cover: {
+    type: String,
+    required: false,
   },
   date: {
     type: Date,
@@ -16,7 +20,11 @@ const DraftSchema = mongoose.Schema({
   },
   content: {
     type: String,
-    required: true,
+    required: false,
+  },
+  originalPost: {
+    type: String,
+    required: false,
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,

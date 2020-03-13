@@ -9,6 +9,10 @@ const PostSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  cover: {
+    type: String,
+    required: false,
+  },
   date: {
     type: Date,
     required: true,
