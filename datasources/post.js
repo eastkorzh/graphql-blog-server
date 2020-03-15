@@ -266,7 +266,7 @@ class PostAPI extends DataSource {
   }
 
   async getAllPosts() {
-    const findedPosts = await Post.find().populate('author')
+    const findedPosts = await Post.find().sort({ date: -1 }).populate('author')
 
     return findedPosts;
   }

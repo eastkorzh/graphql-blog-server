@@ -31,7 +31,13 @@ class AuthAPI extends DataSource {
 
     const savedUser = await user.save();
 
-    return savedUser;
+    // Create and assign token
+    const token = jwt.sign({ _id: savedUser._id }, process.env.SECRET_TOKEN);
+
+    return {
+      ...savedUser._doc,
+      token
+    };
   }
 
   async login({ email, password }) {

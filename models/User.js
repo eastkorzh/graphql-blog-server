@@ -39,8 +39,4 @@ const userSchema = new mongoose.Schema({
   }],
 })
 
-userSchema.methods.createPost = function() {
-  console.log(this);
-}
-
 module.exports = mongoose.model('User', userSchema);
