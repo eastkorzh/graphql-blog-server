@@ -33,6 +33,9 @@ module.exports = {
     deletePost: (_, { _id }, { dataSources }) =>
       dataSources.postAPI.deletePost({ _id }),
 
+    updatePost: (_, { originalPost, draftId, title, content, cover }, { dataSources }) =>
+      dataSources.postAPI.updatePost({ originalPost, draftId, title, content, cover }),
+
     // User
     register: (_, { name, email, password }, { dataSources }) => 
       dataSources.authAPI.register({ name, email, password }),

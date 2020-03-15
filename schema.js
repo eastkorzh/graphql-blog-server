@@ -88,6 +88,14 @@ const typeDefs = gql`
     deletePost(
       _id: ID!
     ): User
+    updatePost(
+      originalPost: ID!
+      draftId: ID!
+      title: String
+      content: String
+      cover: String
+    ): User
+
     updateUserName(
       newName: String!
     ): User
