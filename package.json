@@ -1,13 +1,16 @@
 {
   "name": "graphql-api",
+  "homepage": "https://console-blog.herokuapp.com/",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "debug": "nodemon --inspect-brk=0.0.0.0:9229 index.js"
   },
-  "author": "",
+  "author": "@eastkorzh",
+  "engines" : { "node" : "^12" },
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^2.0.2"

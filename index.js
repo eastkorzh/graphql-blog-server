@@ -22,7 +22,9 @@ const server = new ApolloServer({
     postAPI: new PostAPI,
     userAPI: new UserAPI,
     authAPI: new AuthAPI,
-  })
+  }),
+  introspection: true,
+  playground: true,
 });
 
 const PORT = process.env.PORT || 4000;
