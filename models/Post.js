@@ -25,7 +25,8 @@ const PostSchema = mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-  }
+  },
+  pinned: Boolean,
 }, { _id: false });
 
 module.exports = mongoose.model('Post', PostSchema);

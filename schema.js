@@ -14,6 +14,7 @@ const typeDefs = gql`
     cover: String
     date: String
     author: User
+    pinned: Boolean
   }
 
   type Draft {
